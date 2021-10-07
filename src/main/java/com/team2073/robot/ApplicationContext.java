@@ -20,14 +20,14 @@ public class ApplicationContext {
 
     public CANSparkMax getMotor() {
         if(motor == null) {
-            motor = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+            motor = new CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless);
         }
         return motor;
     }
 
     public Joystick getController() {
         if(controller == null) {
-            controller = new Joystick(2);
+            controller = new Joystick(0);
         }
         return controller;
     }
@@ -37,5 +37,10 @@ public class ApplicationContext {
             simpleSubsystem = new SimpleSubsystem();
         }
         return simpleSubsystem;
+    }
+
+    public double getYValueForController() {
+        getController();
+        return controller.getY();
     }
 }

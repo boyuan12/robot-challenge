@@ -10,7 +10,7 @@ public class HalfPowerCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.HALF_POWER);
+        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.AXES);
     }
 
     @Override

@@ -13,9 +13,4 @@ public class OperatorInterface {
         a.whileHeld(new HalfPowerCommand());
     }
 
-    public double getYAxis() {
-        return controller.getY();
-    }
-
-
 }
