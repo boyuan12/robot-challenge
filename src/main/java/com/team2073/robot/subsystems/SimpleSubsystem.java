@@ -25,7 +25,19 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 output = 0.5;
                 break;
             case AXES:
-                output = appCtx.getYValueForController();
+                double yVal = appCtx.getYValueForController();
+                if (yVal > 0.8) {
+                    output = 0.8;
+                } else if (yVal < -0.8) {
+                    output = -0.8;
+                } else if (yVal < 0.2) {
+                    output = 0.2;
+                } else if (yVal > -0.2) {
+                    output = -0.2;
+                } else {
+                    output = yVal;
+                }
+                System.out.println(output);
                 break;
             default:
                 output = 0;
