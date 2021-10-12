@@ -43,4 +43,12 @@ public class ApplicationContext {
         getController();
         return controller.getY();
     }
+
+    public double getLTriggerValue() {
+        return controller.getRawAxis(2);
+    }
+
+    public double getRTriggerValue() {
+        return controller.getRawAxis(3);
+    }
 }

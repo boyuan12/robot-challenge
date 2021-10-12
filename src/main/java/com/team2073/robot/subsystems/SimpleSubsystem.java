@@ -37,7 +37,10 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 } else {
                     output = yVal;
                 }
-                System.out.println(output);
+
+                output = output * (1 - appCtx.getLTriggerValue());
+                output = output * (1 + appCtx.getRTriggerValue());
+
                 break;
             default:
                 output = 0;
