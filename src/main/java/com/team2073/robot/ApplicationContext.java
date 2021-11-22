@@ -2,6 +2,7 @@ package com.team2073.robot;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.team2073.robot.subsystems.PulseSubsystem;
 import com.team2073.robot.subsystems.SimpleSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -10,6 +11,7 @@ public class ApplicationContext {
     private static CANSparkMax motor;
     private static Joystick controller;
     private static SimpleSubsystem simpleSubsystem;
+    private static PulseSubsystem pulseSubsystem;
 
     public static ApplicationContext getInstance() {
         if (instance == null) {
@@ -50,5 +52,17 @@ public class ApplicationContext {
 
     public double getRTriggerValue() {
         return controller.getRawAxis(3);
+    }
+
+    public boolean getLButton() {
+        return controller.getRawButton(5);
+    }
+
+
+    public PulseSubsystem PulseSubsystem() {
+        if (pulseSubsystem == null) {
+            pulseSubsystem = new PulseSubsystem();
+        }
+        return pulseSubsystem;
     }
 }
