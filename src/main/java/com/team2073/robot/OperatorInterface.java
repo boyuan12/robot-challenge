@@ -1,10 +1,12 @@
 package com.team2073.robot;
 
 
-import com.team2073.common.trigger.ControllerTriggerTrigger;
 import com.team2073.robot.commands.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+
+import com.team2073.robot.triggers.JoystickTrigger;
+
 
 public class OperatorInterface {
     private final ApplicationContext appCtx = ApplicationContext.getInstance();
@@ -16,15 +18,14 @@ public class OperatorInterface {
     private final JoystickButton b = new JoystickButton(controller, 2);
     // private final JoystickButton yAxis = new JoystickButton(controller, 9);
 
-    private final ControllerTriggerTrigger yAxis= new ControllerTriggerTrigger(controller, 0);
+    private final JoystickTrigger yAxis = new JoystickTrigger(controller);
 
     public void init() {
+        yAxis.whenActive(new AxesCommand());
         y.toggleWhenPressed(new CruiseCommand()); // toggleWhenPressed
         x.whileHeld(new BackCommand());
         a.whileHeld(new HalfPowerCommand());
-        yAxis.whenActive(new AxesCommand());
-        b.whileHeld(new PulseCommand());
+        b.toggleWhenPressed(new PulseCommand());
     }
-
 
 }

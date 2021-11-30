@@ -4,10 +4,10 @@ import com.revrobotics.CANError;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.team2073.common.periodic.AsyncPeriodicRunnable;
+import com.team2073.common.util.Timer;
 import com.team2073.robot.ApplicationContext;
-import edu.wpi.first.wpilibj.Timer;
-
-import javax.swing.*;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 
 public class SimpleSubsystem implements AsyncPeriodicRunnable {
@@ -18,9 +18,11 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
     private SimpleSubsystemState currentState = SimpleSubsystemState.STOP;
     private double output = 0;
 
-    boolean breakInfLoop = false;
-
     private double startPos = motor.getEncoder().getPosition();
+
+    private double cc = 0;
+
+    private Timer t = new Timer();
 
     public SimpleSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -28,7 +30,8 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
 
     @Override
     public void onPeriodicAsync() {
-        Timer t = new Timer();
+        output = appCtx.getController().getRawAxis(1) * -1;
+        t.start();
         switch (currentState) {
             case STOP:
                 output = 0;
@@ -37,42 +40,35 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 output = 0.5;
                 break;
             case AXES:
-
-                double yVal = appCtx.getYValueForController() * -1;
-
-                // System.out.println(yVal);
-                // System.out.println(motor.getEncoder().getPosition());
+                double yVal = appCtx.getController().getRawAxis(1) * -1;
                 output = yVal;
-
-                if (output > 0.8 || output < -0.8) {
-                    output = 0.8 * (Math.abs(output)/output); // math.abs(output)/output give the sign
-                } else if (output < 0.2 && output >= 0) {
-                    output = 0;
-                } else if (output > -0.2 && output < 0)  {
-                    output = 0;
-                }
-
-                output = output * (1 - appCtx.getLTriggerValue());
-                output = output * (1 + appCtx.getRTriggerValue());
-
-                System.out.println(output);
-
+                output = output * (1 - appCtx.getController().getRawAxis(2));
+                output = output * (1 + appCtx.getController().getRawAxis(3));
                 break;
             case CRUISE:
                 output = motor.get();
-                System.out.println("Cruise Output: " + output);
+
+                if (cc == 0) {
+                    cc = output;
+                }
+
+                if (appCtx.getController().getRawAxis(1) * -1 > output) {
+                    output = appCtx.getController().getRawAxis(1) * -1;
+                } else {
+                    output = cc;
+                }
+
+                // System.out.println("Y Input: " + appCtx.getController().getRawAxis(1) * -1);
+                // System.out.println("Cruise Output: " + motor.getAppliedOutput());
+                // System.out.println("Cruise Control Speed: ");
+
                 break;
-//            case REVOLUTION:
-//                // motor.getEncoder().setPosition(0);
-//                CANError err = motor.getEncoder().setPosition(3000);
-//                System.out.println(motor.getEncoder().getPosition());
-//                break;
             case BACK:
                 while ((int)motor.getEncoder().getPosition() != (int)startPos) {
                     if ((int)motor.getEncoder().getPosition() > (int)startPos) {
-                        output = -0.1;
+                        output = -Math.abs(appCtx.getController().getRawAxis(1));
                     } else {
-                        output = 0.1;
+                        output = Math.abs(appCtx.getController().getRawAxis(1));;
                     }
                     motor.set(output);
                     System.out.println((int)startPos + " " + (int)motor.getEncoder().getPosition());
@@ -80,14 +76,24 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 break;
             case PULSE:
                 output = 0.25;
-                t.start();
-                System.out.println("Current Time Elapsed: " + t.hasElapsed(1));
+                System.out.println("Had 1 second passed: " + t.hasWaited(1000));
                 break;
             default:
-                output = 0;
+                yVal = appCtx.getController().getRawAxis(1);
+                output = yVal;
+                output = output * (1 - appCtx.getController().getRawAxis(2));
+                output = output * (1 + appCtx.getController().getRawAxis(3));
                 break;
         }
-        // System.out.println("current motor position:" + motor.getEncoder().getPosition());
+
+        if (output > 0.8 || output < -0.8) {
+            output = 0.8 * (Math.abs(output)/output); // math.abs(output)/output give the sign
+        } else if (output < 0.2 && output >= 0) {
+            output = 0;
+        } else if (output > -0.2 && output < 0)  {
+            output = 0;
+        }
+        System.out.println(output);
         motor.set(output);
     }
 
@@ -100,7 +106,6 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
         HALF_POWER,
         AXES,
         CRUISE,
-//        REVOLUTION,
         BACK,
         PULSE,
     }
