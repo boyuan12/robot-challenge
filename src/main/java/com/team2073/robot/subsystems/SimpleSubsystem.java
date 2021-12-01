@@ -42,8 +42,7 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
             case AXES:
                 double yVal = appCtx.getController().getRawAxis(1) * -1;
                 output = yVal;
-                output = output * (1 - appCtx.getController().getRawAxis(2));
-                output = output * (1 + appCtx.getController().getRawAxis(3));
+                output = output * (1 - appCtx.getController().getRawAxis(2) + appCtx.getController().getRawAxis(3));
                 break;
             case CRUISE:
                 output = motor.get();
