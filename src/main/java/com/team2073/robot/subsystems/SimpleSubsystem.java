@@ -23,6 +23,8 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
     private double cc = 0;
 
     private Timer t = new Timer();
+    private int timeWaited = 1000;
+    private boolean timeInc = false;
 
     public SimpleSubsystem() {
         autoRegisterWithPeriodicRunner();
@@ -30,8 +32,6 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
 
     @Override
     public void onPeriodicAsync() {
-        output = appCtx.getController().getRawAxis(1) * -1;
-        t.start();
         switch (currentState) {
             case STOP:
                 output = 0;
@@ -51,15 +51,11 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                     cc = output;
                 }
 
-                if (appCtx.getController().getRawAxis(1) * -1 > output) {
+                if (Math.abs(appCtx.getController().getRawAxis(1) * -1) > Math.abs(output)) {
                     output = appCtx.getController().getRawAxis(1) * -1;
                 } else {
                     output = cc;
                 }
-
-                // System.out.println("Y Input: " + appCtx.getController().getRawAxis(1) * -1);
-                // System.out.println("Cruise Output: " + motor.getAppliedOutput());
-                // System.out.println("Cruise Control Speed: ");
 
                 break;
             case BACK:
@@ -74,8 +70,29 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 }
                 break;
             case PULSE:
-                output = 0.25;
-                System.out.println("Had 1 second passed: " + t.hasWaited(1000));
+                if (t.hasWaited(timeWaited)) {
+                    output = 0.25;
+                    if (!timeInc) {
+                        timeWaited += 1000;
+                        timeInc = true;
+                    }
+                }
+
+                if (t.hasWaited(timeWaited)) {
+                    output = 0;
+                    if (timeInc) {
+                        timeWaited += 1000;
+                        timeInc = false;
+                    }
+                }
+
+                break;
+            case REVOLUTION:
+                output = 0.1;
+                while ((int)motor.getEncoder().getPosition() < 3000) {
+                    motor.set(output);
+                    System.out.println("Curr Pos: " + (int)motor.getEncoder().getPosition());
+                }
                 break;
             default:
                 yVal = appCtx.getController().getRawAxis(1);
@@ -98,6 +115,11 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
 
     public void setCurrentState(SimpleSubsystemState currentState) {
         this.currentState = currentState;
+
+        if (currentState == SimpleSubsystemState.PULSE) {
+            t.start();
+        }
+
     }
 
     public enum SimpleSubsystemState {
@@ -107,6 +129,7 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
         CRUISE,
         BACK,
         PULSE,
+        REVOLUTION,
     }
 
 }

@@ -16,7 +16,6 @@ public class OperatorInterface {
     private final JoystickButton y = new JoystickButton(controller, 4);
     private final JoystickButton x = new JoystickButton(controller, 3);
     private final JoystickButton b = new JoystickButton(controller, 2);
-    // private final JoystickButton yAxis = new JoystickButton(controller, 9);
 
     private final JoystickTrigger yAxis = new JoystickTrigger(controller);
 
@@ -25,7 +24,8 @@ public class OperatorInterface {
         y.toggleWhenPressed(new CruiseCommand()); // toggleWhenPressed
         x.whileHeld(new BackCommand());
         a.whileHeld(new HalfPowerCommand());
-        b.toggleWhenPressed(new PulseCommand());
+        b.whenActive(new RevolutionCommand());
+        lb.whileHeld(new PulseCommand());
     }
 
 }
