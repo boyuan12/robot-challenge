@@ -11,7 +11,7 @@ public class RevolutionCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.REVOLUTION); // TODO: change this will cause error
+        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.REVOLUTION);
     }
 
     @Override

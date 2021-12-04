@@ -2,9 +2,7 @@ package com.team2073.robot.commands;
 
 import com.team2073.common.command.AbstractLoggingCommand;
 import com.team2073.robot.ApplicationContext;
-import com.team2073.robot.subsystems.PulseSubsystem;
 import com.team2073.robot.subsystems.SimpleSubsystem;
-import com.team2073.common.util.Timer;
 
 public class PulseCommand extends AbstractLoggingCommand {
     private ApplicationContext appCtx = new ApplicationContext().getInstance();
@@ -12,7 +10,7 @@ public class PulseCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.PULSE); // TODO: change this will cause error
+        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.PULSE);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class AxesCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.AXES); // TODO: change this will cause error
+        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.AXES);
     }
 
     @Override

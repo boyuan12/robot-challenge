@@ -1,13 +1,8 @@
 package com.team2073.robot.subsystems;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANError;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.team2073.common.periodic.AsyncPeriodicRunnable;
 import com.team2073.common.util.Timer;
 import com.team2073.robot.ApplicationContext;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 
 public class SimpleSubsystem implements AsyncPeriodicRunnable {
@@ -60,13 +55,14 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 break;
             case BACK:
                 while ((int)motor.getEncoder().getPosition() != (int)startPos) {
-                    if ((int)motor.getEncoder().getPosition() > (int)startPos) {
+                    double pos = motor.getEncoder().getPosition();
+                    if ((int)pos > (int)startPos) {
                         output = -Math.abs(appCtx.getController().getRawAxis(1));
                     } else {
                         output = Math.abs(appCtx.getController().getRawAxis(1));;
                     }
                     motor.set(output);
-                    System.out.println((int)startPos + " " + (int)motor.getEncoder().getPosition());
+                    System.out.println((int)startPos + " " + (int)pos);
                 }
                 break;
             case PULSE:
@@ -89,9 +85,10 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                 break;
             case REVOLUTION:
                 output = 0.1;
-                while ((int)motor.getEncoder().getPosition() < 3000) {
+                double pos = motor.getEncoder().getPosition();
+                while ((int)pos < 3000) {
                     motor.set(output);
-                    System.out.println("Curr Pos: " + (int)motor.getEncoder().getPosition());
+                    System.out.println("Curr Pos: " + (int)pos);
                 }
                 break;
             default:

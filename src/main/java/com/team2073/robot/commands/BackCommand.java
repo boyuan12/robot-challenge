@@ -10,7 +10,7 @@ public class BackCommand extends AbstractLoggingCommand {
 
     @Override
     protected void initializeDelegate() {
-        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.BACK); // TODO: change this will cause error
+        simpleSubsystem.setCurrentState(SimpleSubsystem.SimpleSubsystemState.BACK);
     }
 
     @Override
