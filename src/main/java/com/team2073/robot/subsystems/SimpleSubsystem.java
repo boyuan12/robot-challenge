@@ -14,6 +14,7 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
     private double output = 0;
 
     private double startPos = motor.getEncoder().getPosition();
+    private double startPosRev;
 
     private double cc = 0;
 
@@ -59,7 +60,7 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
                     if ((int)pos > (int)startPos) {
                         output = -Math.abs(appCtx.getController().getRawAxis(1));
                     } else {
-                        output = Math.abs(appCtx.getController().getRawAxis(1));;
+                        output = Math.abs(appCtx.getController().getRawAxis(1));
                     }
                     motor.set(output);
                     System.out.println((int)startPos + " " + (int)pos);
@@ -84,11 +85,13 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
 
                 break;
             case REVOLUTION:
-                output = 0.1;
-                double pos = motor.getEncoder().getPosition();
-                while ((int)pos < 3000) {
-                    motor.set(output);
-                    System.out.println("Curr Pos: " + (int)pos);
+
+                output = 0.5;
+                // double pos = motor.getEncoder().getPosition();
+                if ((int)motor.getEncoder().getPosition() < 100) {
+                    System.out.println("Curr Pos: " + (int)motor.getEncoder().getPosition());
+                } else {
+                    output = 0;
                 }
                 break;
             default:
@@ -115,6 +118,8 @@ public class SimpleSubsystem implements AsyncPeriodicRunnable {
 
         if (currentState == SimpleSubsystemState.PULSE) {
             t.start();
+        } else if (currentState == SimpleSubsystemState.REVOLUTION) {
+            motor.getEncoder().setPosition(0);
         }
 
     }
